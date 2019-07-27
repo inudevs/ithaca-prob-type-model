@@ -1,5 +1,28 @@
+import re
 import cv2
 import numpy as np
+import pytesseract
+from PIL import Image
+from unidecode import unidecode
+
+tessdata_config = '--tessdata-dir "./tessdata"'
+
+
+def ocr_text(filename):
+    return pytesseract.image_to_string(
+        Image.open(filename),
+        lang='kor',
+        config=tessdata_config)
+
+
+def get_score(filename):
+    text = unidecode(ocr_text(filename))
+    try:
+        score = re.search(r'(\d)[^\d]*$', text).group(1)
+    except AttributeError:
+        return None
+    return score
+
 
 img = cv2.imread('./outfile.png')
 
@@ -48,7 +71,11 @@ for idx, ctr in enumerate(sorted_ctrs):
     roi = image[y:y + h, x:x + w]
     # cv2.imshow('problem {}'.format(idx), roi)
     cv2.rectangle(result, (x, y), (x + w, y + h), (90, 0, 255), 2)
-    cv2.imwrite('prob-{}.png'.format(idx), roi)
+
+    filename = 'prob-{}.png'.format(idx)
+    cv2.imwrite(filename, roi)
+
+    print(get_score(filename))
 
 cv2.imshow('result', result)
 cv2.waitKey(0)
