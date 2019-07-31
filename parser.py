@@ -30,7 +30,7 @@ def parse_page(name):
     # 시험지 윗부분의 불필요한 제목, 선 등을 crop
 
     front = name.split('-')[4] == 0
-    if front: # 맨 앞 페이지인 경우
+    if front:  # 맨 앞 페이지인 경우
         x, y = (100, 390)
     else:
         x, y = (100, 250)
@@ -73,7 +73,8 @@ def parse_page(name):
         x, y, w, h = cv2.boundingRect(ctr)
 
         if not front:
-            if y >= 25 and not y > (img_height / 2): continue
+            if y >= 25 and not y > (img_height / 2):
+                continue
             # 중앙보다 위쪽인 박스 중 상단에 붙어 있는 박스가 아니면 패스
             # (시험지 윗부분의 보기 제거)
 
@@ -93,6 +94,7 @@ def parse_page(name):
 
     # cv2.imshow('result', result)
     # cv2.waitKey(0)
+
 
 if __name__ == '__main__':
     parse_page('2008-03-1-2-7')
