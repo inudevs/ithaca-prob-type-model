@@ -23,11 +23,13 @@ from unidecode import unidecode
 #         return None
 #     return score
 
-def parse_page(input_file, front):
-    img = cv2.imread(input_file)
+def parse_page(name):
+    input_path = './images/{}.png'.format(name)
+    img = cv2.imread(input_path)
 
     # 시험지 윗부분의 불필요한 제목, 선 등을 crop
 
+    front = name.split('-')[4] == 0
     if front: # 맨 앞 페이지인 경우
         x, y = (100, 390)
     else:
@@ -47,7 +49,7 @@ def parse_page(input_file, front):
     cv2.imshow('dilation', img_dilation)
 
     # 등치선 찾고 작은 순서대로 정렬
-    ctrs, hier = cv2.findContours(
+    ctrs, _ = cv2.findContours(
         img_dilation.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     sorted_ctrs = sorted(
         ctrs,
@@ -61,7 +63,12 @@ def parse_page(input_file, front):
     # 인식된 영역의 세로 길이는 전체 시험지의 20%를 넘으면 안 됨
     max_height = (img_height / 5)
 
-    for idx, ctr in enumerate(sorted_ctrs):
+    # subject = ['korean', 'english', 'math'][int(name.split('-')[3])]
+    subject = 'math'
+    grade = ['_', 'first', 'second', 'third'][int(name.split('-')[2])]
+    idx = 0
+
+    for ctr in sorted_ctrs:
         # 경계 박스를 구함
         x, y, w, h = cv2.boundingRect(ctr)
 
@@ -74,15 +81,13 @@ def parse_page(input_file, front):
         if not w > min_width or h > max_height:
             continue
 
-        print(x, y)
-        print((img_height - 100))
         # Getting ROI
         roi = image[y:y + h, x:x + w]
-        # cv2.imshow('problem {}'.format(idx), roi)
         cv2.rectangle(result, (x, y), (x + w, y + h), (90, 0, 255), 2)
 
-        filename = 'prob-{}.png'.format(idx)
+        filename = './data/{}/{}/{}-{}.png'.format(subject, grade, name, idx)
         cv2.imwrite(filename, roi)
+        idx += 1
 
         # print(get_score(filename))
 
@@ -90,4 +95,4 @@ def parse_page(input_file, front):
     # cv2.waitKey(0)
 
 if __name__ == '__main__':
-    parse_page('./2008-03-1-2-7.png', front=False)
+    parse_page('2008-03-1-2-7')
