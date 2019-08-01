@@ -1,5 +1,7 @@
 *.pdf
 *.png
+*.jpg
+*.jpeg
 
 .DS_Store
 .vscode/
