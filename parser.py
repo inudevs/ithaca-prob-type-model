@@ -63,8 +63,7 @@ def parse_page(name):
     # 인식된 영역의 세로 길이는 전체 시험지의 20%를 넘으면 안 됨
     max_height = (img_height / 5)
 
-    # subject = ['korean', 'english', 'math'][int(name.split('-')[3])]
-    subject = 'math'
+    subject = ['korean', 'english', 'math'][int(name.split('-')[3])]
     grade = ['_', 'first', 'second', 'third'][int(name.split('-')[2])]
     idx = 0
 

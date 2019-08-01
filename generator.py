@@ -5,7 +5,7 @@ names = []
 for year in range(2008, 2020):
     for month in [3, 6, 9, 11]:
         for grade in [1, 2, 3]:
-            for subject in [2]:  # math only
+            for subject in [1]:  # math only
                 names.append(
                     '{}-{:02d}-{}-{}'.format(year, month, grade, subject))
 print(names)
